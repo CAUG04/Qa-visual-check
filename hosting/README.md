@@ -30,3 +30,12 @@ Netlify (app.netlify.com/drop) y Cloudflare Pages (Direct Upload) aceptan un zip
 **GitHub Pages no permite cabeceras personalizadas.** Sirve igual y la CSP incrustada sigue
 aplicando, pero no tendrás `frame-ancestors` ni HSTS: para un dominio propio, prefiere
 Cloudflare Pages o Netlify.
+
+## Visibilidad en buscadores
+
+Mientras la herramienta sea de uso interno va con `noindex`: `dist/robots.txt` con
+`Disallow: /` y la cabecera `X-Robots-Tag: noindex, nofollow`. Ninguna de las dos impide
+que alguien con el enlace la use; solo evitan que aparezca en los buscadores.
+
+Para hacerla pública y rastreable: borra `dist/robots.txt` y la línea `X-Robots-Tag` de
+`_headers`. Hazlo solo cuando quieras que cualquiera pueda encontrarla.
