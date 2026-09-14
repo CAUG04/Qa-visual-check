@@ -11,15 +11,21 @@ Estas configuraciones añaden, sobre la CSP que ya viaja dentro del HTML, las ca
   cámara, micrófono o ubicación. `display-capture=(self)` se deja habilitado porque la función
   «Capturar pantalla» lo necesita.
 
-| Archivo | Para |
-|---|---|
-| `_headers` | Netlify, Cloudflare Pages |
-| `netlify.toml` | Netlify (alternativa con configuración de build) |
-| `vercel.json` | Vercel |
-| `nginx.conf.example` | Servidor propio |
+| Archivo | Dónde va | Para |
+|---|---|---|
+| `netlify.toml` | ya está en la raíz del repo | Netlify conectado a GitHub |
+| `vercel.json` | ya está en la raíz del repo | Vercel conectado a GitHub |
+| `dist/_headers` | ya está junto al HTML publicado | Netlify y Cloudflare Pages |
+| `hosting/_headers` | copia de referencia | para pegar en otro hosting |
+| `hosting/nginx.conf.example` | — | servidor propio |
 
-Copia el archivo correspondiente a la raíz del proyecto que publiques, junto con
-`dist/QA-Visual-Check.html`.
+Con el repositorio conectado a Netlify o a Vercel no hay que configurar nada: publican
+`dist/`, sirven `QA-Visual-Check.html` en la raíz y aplican las cabeceras.
+
+### Sin repositorio, desde el navegador
+
+Netlify (app.netlify.com/drop) y Cloudflare Pages (Direct Upload) aceptan un zip con
+`index.html` y `_headers` en la raíz. Es la vía cuando no hay terminal a mano.
 
 **GitHub Pages no permite cabeceras personalizadas.** Sirve igual y la CSP incrustada sigue
 aplicando, pero no tendrás `frame-ancestors` ni HSTS: para un dominio propio, prefiere
