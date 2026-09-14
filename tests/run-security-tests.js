@@ -83,6 +83,29 @@ const polluted = page => page.evaluate(() => ({
   }));
   check(extScript === 'bloqueado', 'no se puede inyectar un script externo', extScript);
 
+  // Los scripts incrustados se autorizan por hash: cualquier otro no corre.
+  check(/script-src[^;]*sha256-/.test(csp), 'script-src autoriza por hash SHA-256');
+  check(!/script-src[^;]*'unsafe-inline'/.test(csp), "script-src ya no usa 'unsafe-inline'");
+  const inlineCorrio = await page.evaluate(() => new Promise(res => {
+    const s = document.createElement('script');
+    s.textContent = 'window.__pwned = 1';   // inyección en línea clásica
+    document.body.appendChild(s);
+    setTimeout(() => res(!!window.__pwned), 400);
+  }));
+  check(inlineCorrio === false, 'un <script> en línea inyectado NO se ejecuta', inlineCorrio ? 'SE EJECUTÓ' : 'bloqueado por hash');
+  const handlerCorrio = await page.evaluate(() => new Promise(res => {
+    const d = document.createElement('div');
+    d.setAttribute('onclick', 'window.__pwned = 1');   // manejador en atributo
+    document.body.appendChild(d); d.click();
+    setTimeout(() => { const r = !!window.__pwned; d.remove(); res(r); }, 300);
+  }));
+  check(handlerCorrio === false, 'un manejador onclick inyectado NO se ejecuta',
+        handlerCorrio ? 'SE EJECUTÓ' : 'bloqueado');
+
+  // A partir de aquí, cualquier violación de CSP sería de la aplicación en uso
+  // normal, no de los ataques deliberados de arriba.
+  const cspTrasAtaques = cspViolations.length;
+
   console.log('\nB) Sesión .json maliciosa');
   await page.locator('#file-session').setInputFiles(path.join(ATK, 'sesion-maliciosa.json'));
   await page.waitForTimeout(3500);
@@ -263,8 +286,9 @@ const polluted = page => page.evaluate(() => ({
   console.log('\nI) Aislamiento de red durante toda la sesión');
   check(netOut.length === 0, 'ni un solo byte salió a la red en toda la prueba',
         netOut.slice(0,3).join(' | ') || `0 respuestas externas · ${netBlocked.length} intentos de ataque bloqueados`);
-  check(cspViolations.length === 0 || cspViolations.every(v => /example\.com/.test(v)),
-        'las únicas violaciones de CSP son los intentos de ataque bloqueados', String(cspViolations.length));
+  const cspPropias = cspViolations.slice(cspTrasAtaques);
+  check(cspPropias.length === 0, 'la aplicación en uso normal no viola su propia CSP',
+        cspPropias.slice(0,2).join(' | ') || `${cspTrasAtaques} violaciones, todas de los ataques bloqueados`);
 
   console.log('\nJ) Higiene general');
   check(errors.length === 0, 'sin errores de JavaScript en toda la sesión hostil', errors.slice(0,3).join(' | '));

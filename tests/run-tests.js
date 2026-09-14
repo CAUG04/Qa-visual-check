@@ -245,6 +245,31 @@ function check(cond, name, extra=''){ cond ? ok(name, extra) : bad(name, extra);
   const pdfDim = await page.locator('#list-design .thumb-item').nth(2).locator('.thumb-dim').textContent();
   check(/\d+×\d+ px · PDF/.test(pdfDim), 'páginas importadas con resolución 2×', pdfDim.trim());
 
+  console.log('\n10b) PDF sin Worker disponible (respaldo tipo Safari)');
+  {
+    const ctxSW = await browser.newContext({ viewport:{ width:1300, height:900 } });
+    await ctxSW.addInitScript(() => {           // se simula un navegador que bloquea los workers
+      window.Worker = function(){ throw new DOMException('Blocked', 'SecurityError'); };
+    });
+    const pSW = await ctxSW.newPage();
+    const errSW = [];
+    pSW.on('pageerror', e => errSW.push(e.message.slice(0, 120)));
+    await pSW.goto(TOOL); await pSW.waitForTimeout(700);
+    await pSW.locator('#file-design').setInputFiles(path.join(DIR,'figma-suite.pdf'));
+    await pSW.waitForTimeout(9000);
+    const abrio = await pSW.locator('#modal-root').isVisible();
+    let importadas = 0;
+    if (abrio){
+      await pSW.locator('#modal-foot button.primary').click();
+      await pSW.waitForTimeout(9000);
+      importadas = await pSW.locator('#list-design .thumb-item').count();
+    }
+    check(abrio && importadas >= 2, 'el PDF se lee en el hilo principal cuando no hay Worker',
+          `${importadas} páginas importadas`);
+    check(errSW.length === 0, 'sin errores en el camino de respaldo', errSW.slice(0,2).join(' | '));
+    await ctxSW.close();
+  }
+
   console.log('\n11) Sesión (guardar y reabrir)');
   const dl5 = await Promise.all([page.waitForEvent('download'), page.locator('#btn-save-session').click()]);
   const sesPath = path.join(OUT, 'sesion.json'); await dl5[0].saveAs(sesPath);

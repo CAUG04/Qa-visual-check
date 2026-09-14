@@ -56,8 +56,8 @@ El archivo publicado se arma a partir de las fuentes en `src/`:
 npm install          # pdfjs-dist + playwright (solo para construir y probar)
 npm run build        # genera dist/QA-Visual-Check.html
 npm run fixtures     # insumos de prueba: imágenes, PDF, Excel y archivos hostiles
-npm test             # 50 verificaciones funcionales en un navegador real
-npm run test:security # 44 verificaciones de seguridad con archivos maliciosos
+npm test             # 52 verificaciones funcionales en un navegador real
+npm run test:security # 48 verificaciones de seguridad con archivos maliciosos
 ```
 
 ```
@@ -77,6 +77,8 @@ build.py              empaqueta todo en un único HTML
 
 `build.py` incrusta [pdf.js](https://mozilla.github.io/pdf.js/) convirtiéndolo a scripts clásicos
 para que la lectura de PDF funcione al abrir el archivo desde el disco, sin red ni módulos.
+También calcula el hash SHA-256 de cada script incrustado y genera con ellos la política de
+seguridad, que propaga al HTML y a los archivos de hosting: la CSP se define en un solo lugar.
 
 ## Pruebas
 

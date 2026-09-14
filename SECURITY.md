@@ -9,13 +9,20 @@ si alguien lograra inyectar código en ella.
 
 ```
 default-src 'none'; connect-src 'none'; img-src data: blob:;
-script-src 'unsafe-inline' blob:; style-src 'unsafe-inline';
+script-src 'sha256-…' 'sha256-…' 'sha256-…' blob:; style-src 'unsafe-inline';
 worker-src blob:; object-src 'none'; form-action 'none'; base-uri 'none';
+frame-ancestors 'none'   ← solo como cabecera HTTP
 ```
 
 `connect-src 'none'` bloquea `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource` y
-`sendBeacon`. `default-src 'none'` impide cargar cualquier recurso externo. Verificado con
-pruebas automatizadas: `tests/run-security-tests.js`.
+`sendBeacon`. `default-src 'none'` impide cargar cualquier recurso externo.
+
+`script-src` no usa `'unsafe-inline'`: autoriza **solo** los tres scripts incrustados, por su
+hash SHA-256, que `build.py` calcula en cada compilación. Un `<script>` inyectado —o un
+atributo `onclick` inyectado— no coincide con ningún hash y el navegador se niega a ejecutarlo.
+
+Todo esto está verificado con pruebas automatizadas (`tests/run-security-tests.js`), que
+intentan los ataques y comprueban que fallan.
 
 ## Qué datos se manejan y dónde quedan
 

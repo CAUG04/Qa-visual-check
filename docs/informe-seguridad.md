@@ -14,8 +14,8 @@ puede intentar incrustarla o inducir a la víctima a cargar contenido preparado.
 
 | Suite | Verificaciones | Estado |
 |---|---|---|
-| Funcional (`tests/run-tests.js`) | 50 | 50 OK |
-| Seguridad (`tests/run-security-tests.js`) | 44 | 44 OK |
+| Funcional (`tests/run-tests.js`) | 52 | 52 OK |
+| Seguridad (`tests/run-security-tests.js`) | 48 | 48 OK |
 
 Sin peticiones de red salientes en ninguna prueba. Sin errores de JavaScript no controlados.
 
@@ -80,6 +80,11 @@ al abrirlo en pestaña nueva.
 
 * **CSP estricta incrustada** en el HTML: sin red, sin recursos externos, sin `eval`.
   El plan B del lector de PDF dejó de usar `new Function` para no necesitar `'unsafe-eval'`.
+* **`script-src` por hash SHA-256, sin `'unsafe-inline'`.** `build.py` calcula el hash de cada
+  script incrustado y genera con ellos la política, que propaga al `<meta>` y a los cuatro
+  archivos de hosting: la CSP se define en un solo lugar y no puede quedar desincronizada.
+  Efecto medible: un `<script>` inyectado en el DOM y un atributo `onclick` inyectado **no se
+  ejecutan**; ambos casos están en la suite. En securityheaders.com esto sube la nota de A a A+.
 * **`Permissions-Policy`, `frame-ancestors`, HSTS y `Referrer-Policy`** preparados en `hosting/`
   para cuando el proyecto se publique en un dominio.
 * **Borrado de datos locales** desde la interfaz, para equipos compartidos.
@@ -94,6 +99,7 @@ al abrirlo en pestaña nueva.
 | F-03 | La auto-alineación premiaba escalas erróneas: al estirar la imagen los bordes se difuminan y bajaba el error absoluto | Elegía 103 % y aumentaba la diferencia reportada |
 | F-04 | Condición de carrera al cargar diseños y capturas a la vez | Emparejamiento incompleto |
 | F-05 | Con Safari los *workers* desde `file://` pueden bloquearse | El PDF no abría; ahora hay respaldo en el hilo principal |
+| F-06 | Al quitar `new Function` del respaldo anterior, el código del worker pasó al ámbito global y chocó con pdf.js (`Identifier 'InvalidPDFException' has already been declared`) | El respaldo quedó roto sin que ninguna prueba lo notara; ahora va envuelto en una función y el caso «sin Worker» es parte de la suite funcional |
 
 ## 5. Riesgos aceptados (documentados, no corregibles en el producto)
 

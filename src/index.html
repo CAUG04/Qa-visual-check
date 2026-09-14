@@ -3,25 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<!-- Política de seguridad de contenido: la página no puede hacer ninguna
-     petición de red (connect-src 'none'), no carga nada externo y solo admite
-     imágenes en data:/blob:. Es la garantía técnica de que ni los diseños ni
-     las capturas ni los escenarios salen del navegador. -->
-<meta http-equiv="Content-Security-Policy" content="
-  default-src 'none';
-  script-src 'unsafe-inline' blob:;
-  style-src 'unsafe-inline';
-  img-src data: blob:;
-  media-src blob: data: mediastream:;
-  font-src data:;
-  worker-src blob:;
-  child-src blob:;
-  frame-src 'self' data: blob:;
-  connect-src 'none';
-  object-src 'none';
-  form-action 'none';
-  base-uri 'none';
-">
+<!-- Política de seguridad de contenido. La genera build.py: los scripts
+     incrustados se autorizan por hash SHA-256, de modo que un script inyectado
+     no se ejecuta, y connect-src 'none' impide cualquier petición de red. Es la
+     garantía técnica de que los diseños, las capturas y los escenarios no salen
+     del navegador. -->
+<meta http-equiv="Content-Security-Policy" content="__CSP__">
 <meta name="referrer" content="no-referrer">
 <title>QA Visual Check — Figma vs Web</title>
 <style>__CSS__</style>
