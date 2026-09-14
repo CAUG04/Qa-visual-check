@@ -1,0 +1,74 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0}
+body{font:16px/1.5 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#161b24;background:#fff}
+section{width:1440px;padding:0 0 40px}
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 64px;border-bottom:1px solid #e6eaf1}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+.logo i{width:26px;height:26px;border-radius:7px;background:#2f6ee0;display:block}
+nav{display:flex;gap:28px;font-size:14.5px;color:#4b5666}
+.cta{background:#2f6ee0;color:#fff;border-radius:9px;padding:10px 20px;font-weight:650;font-size:14.5px}
+.hero{padding:74px 64px 58px;display:flex;gap:56px;align-items:center}
+.hero-tx{flex:1}
+h1{font-size:44px;line-height:1.12;letter-spacing:-.03em;margin-bottom:16px}
+.hero p{font-size:17px;color:#4b5666;max-width:520px;margin-bottom:26px}
+.hero-img{width:420px;height:260px;border-radius:14px;background:linear-gradient(135deg,#dbe6fb,#eef3fd);border:1px solid #dbe3ef}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding:0 64px}
+.card{border:1px solid #e6eaf1;border-radius:13px;padding:22px}
+.card i{width:34px;height:34px;border-radius:9px;background:#e8f0fe;display:block;margin-bottom:14px}
+.card h3{font-size:17px;margin-bottom:7px}
+.card p{font-size:14px;color:#4b5666}
+footer{margin-top:52px;padding:26px 64px;background:#f5f7fb;color:#7c8798;font-size:13px;display:flex;justify-content:space-between}
+/* login */
+.login{display:flex;justify-content:center;padding:70px 0}
+.box{width:400px;border:1px solid #e6eaf1;border-radius:14px;padding:30px}
+.box h2{font-size:24px;letter-spacing:-.02em;margin-bottom:6px}
+.box .sub{font-size:14px;color:#7c8798;margin-bottom:22px}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+input{width:100%;padding:11px 13px;border:1px solid #d8dfea;border-radius:9px;font-size:14.5px;margin-bottom:16px}
+.err{border-color:#d92c3c!important}
+.msg{color:#d92c3c;font-size:12.5px;margin:-10px 0 16px}
+.btn-full{display:block;width:100%;text-align:center;background:#2f6ee0;color:#fff;border-radius:9px;padding:12px;font-weight:650}
+</style></head><body>
+
+<section id="home">
+  <header>
+    <div class="logo"><i></i>Nimbus</div>
+    <nav><span>Producto</span><span>Precios</span><span>Clientes</span><span>Recursos</span></nav>
+    <div class="cta">Empezar gratis</div>
+  </header>
+  <div class="hero">
+    <div class="hero-tx">
+      <h1>Todo tu equipo,<br>un solo tablero</h1>
+      <p>Centraliza tareas, documentos y decisiones en un espacio que tu equipo ya sabe usar.</p>
+      <div class="cta" style="display:inline-block">Crear cuenta</div>
+    </div>
+    <div class="hero-img"></div>
+  </div>
+  <div class="cards">
+    <div class="card"><i></i><h3>Tableros claros</h3><p>Organiza el trabajo por flujos y mantén todo visible.</p></div>
+    <div class="card"><i></i><h3>Automatiza</h3><p>Reglas simples para que nada se quede atrás.</p></div>
+    <div class="card"><i></i><h3>Reportes</h3><p>Indicadores al día sin armar hojas de cálculo.</p></div>
+  </div>
+  <footer><span>© 2026 Nimbus</span><span>Términos · Privacidad</span></footer>
+</section>
+
+<section id="login">
+  <header>
+    <div class="logo"><i></i>Nimbus</div>
+    <nav><span>Ayuda</span></nav>
+  </header>
+  <div class="login">
+    <div class="box">
+      <h2>Inicia sesión</h2>
+      <p class="sub">Usa el correo de tu organización</p>
+      <label>Correo</label>
+      <input value="carlos@empresa.com">
+      <label>Contraseña</label>
+      <input class="err" type="password" value="123456">
+      <p class="msg">La contraseña debe tener al menos 8 caracteres</p>
+      <div class="btn-full">Entrar</div>
+    </div>
+  </div>
+</section>
+
+</body></html>

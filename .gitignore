@@ -1,0 +1,16 @@
+node_modules/
+vendor/
+tests/out/
+tests/out-sec/
+tests/attack/
+tests/*.png
+tests/*.pdf
+tests/*.xlsx
+tests/fixture-web.html
+tests/debug*.js
+tests/shot-report.js
+tests/make-tall.js
+__pycache__/
+.DS_Store
+Thumbs.db
+*.log

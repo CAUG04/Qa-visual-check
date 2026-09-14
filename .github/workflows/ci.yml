@@ -1,0 +1,60 @@
+name: Construcción y pruebas
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          python -m pip install --quiet openpyxl pillow
+
+      - name: Construir el archivo único
+        run: npm run build
+
+      - name: Verificar que dist está al día con src
+        run: |
+          git diff --exit-code -- dist/QA-Visual-Check.html || {
+            echo "::error::dist/QA-Visual-Check.html no coincide con las fuentes. Ejecuta 'npm run build' y súbelo."
+            exit 1
+          }
+
+      - name: Generar insumos de prueba
+        run: npm run fixtures
+
+      - name: Pruebas funcionales
+        run: npm test
+
+      - name: Pruebas de seguridad
+        run: npm run test:security
+
+      - name: Guardar evidencias de las pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidencias-pruebas
+          path: |
+            tests/out/*.png
+            tests/out-sec/*.png
+          retention-days: 14
+          if-no-files-found: ignore

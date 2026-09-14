@@ -1,0 +1,18 @@
+{
+  "name": "qa-visual-check",
+  "version": "1.0.0",
+  "description": "Comparador visual Figma vs web con checklist de escenarios desde Excel y reporte, en un solo archivo HTML sin dependencias en tiempo de ejecución.",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "python3 build.py",
+    "fixtures": "node tests/make-fixtures.js && python3 tests/make-fixtures.py",
+    "test": "node tests/run-tests.js",
+    "test:security": "node tests/run-security-tests.js",
+    "test:all": "npm test && npm run test:security"
+  },
+  "devDependencies": {
+    "pdfjs-dist": "5.7.284",
+    "playwright": "^1.49.0"
+  }
+}

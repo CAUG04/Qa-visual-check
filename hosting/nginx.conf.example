@@ -1,0 +1,33 @@
+# Servir el archivo único detrás de Nginx con TLS.
+server {
+    listen 443 ssl http2;
+    server_name qa.tu-dominio.com;
+
+    ssl_certificate     /etc/letsencrypt/live/qa.tu-dominio.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/qa.tu-dominio.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    root /var/www/qa-visual-check;
+    index QA-Visual-Check.html;
+
+    add_header Content-Security-Policy "default-src 'none'; script-src 'unsafe-inline' blob:; style-src 'unsafe-inline'; img-src data: blob:; media-src blob: data: mediastream:; font-src data:; worker-src blob:; child-src blob:; frame-src 'self' data: blob:; connect-src 'none'; object-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "no-referrer" always;
+    add_header Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), display-capture=(self)" always;
+    add_header Cross-Origin-Opener-Policy "same-origin" always;
+    add_header Cross-Origin-Resource-Policy "same-origin" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+    gzip on;
+    gzip_types text/html;
+    gzip_min_length 1024;
+
+    location = / { try_files /QA-Visual-Check.html =404; }
+}
+
+server {
+    listen 80;
+    server_name qa.tu-dominio.com;
+    return 301 https://$host$request_uri;
+}
