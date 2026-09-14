@@ -408,6 +408,37 @@ table.scenarios tr[data-status="Bloqueado"] .st-cell select{color:var(--warn)}
   .report-layout{grid-template-columns:1fr;height:auto}
   #report-frame{min-height:520px}
 }
+/* En pantallas angostas la barra superior se apila en dos filas y las
+   pestañas se desplazan de lado, en vez de encimarse o cortarse. */
+@media (max-width:760px){
+  .topbar{flex-wrap:wrap;gap:9px 12px;padding:9px 12px}
+  .brand{order:1}
+  .brand strong{white-space:nowrap}
+  .brand span{display:none}
+  .topbar-actions{order:2;margin-left:auto;gap:5px}
+  .topbar-actions .btn{padding:5px 9px;font-size:12px}
+  .proj-field{order:3;flex:1 0 100%;gap:0}
+  .proj-field span{display:none}
+  .proj-field input{width:100%}
+  .tabs{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 8px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;padding:9px 11px;font-size:12.5px}
+  .autosave{display:none}
+  .view{padding:10px}
+  .src-head h2{font-size:12.5px}
+  .dropzone{padding:14px 10px}
+  /* Sin esto, una columna de grilla nunca baja del ancho de su contenido
+     y el panel completo se sale de la pantalla. */
+  .sources-grid,.src-col,.panel,.report-layout{min-width:0}
+  .src-head{flex-wrap:wrap;gap:6px}
+  .src-head-actions{flex-wrap:wrap}
+  .panel-head{flex-wrap:wrap}
+  .dropzone p{overflow-wrap:anywhere}
+  .cmp-toolbar{padding:8px 10px;gap:9px}
+  #cmp-pair{min-width:150px;max-width:100%}
+  .findings-grid{grid-template-columns:1fr;padding:10px}
+  .form-grid{padding:10px}
+}
 @media (max-width:900px){
   .sources-grid{grid-template-columns:1fr}
   .kpi-strip{display:none}
