@@ -57,7 +57,7 @@ npm install          # pdfjs-dist + playwright (solo para construir y probar)
 npm run build        # genera dist/QA-Visual-Check.html
 npm run fixtures     # insumos de prueba: imágenes, PDF, Excel y archivos hostiles
 npm test             # 50 verificaciones funcionales en un navegador real
-npm run test:security # 42 verificaciones de seguridad con archivos maliciosos
+npm run test:security # 44 verificaciones de seguridad con archivos maliciosos
 ```
 
 ```
@@ -83,7 +83,7 @@ para que la lectura de PDF funcione al abrir el archivo desde el disco, sin red 
 | Suite | Qué cubre |
 |---|---|
 | `tests/run-tests.js` | Carga de imágenes y PDF, emparejamiento, alineación automática, diferencia de píxeles, medición, cuentagotas, zonas ignoradas, hallazgos, importación de Excel con mapeo de columnas, filtros, exportaciones, reporte y sesión guardada. |
-| `tests/run-security-tests.js` | Sesiones `.json` envenenadas, contaminación de prototipos, XSS en reporte y tabla, bombas zip, inyección de fórmulas, SVG con script, imágenes desmesuradas y aislamiento de red. |
+| `tests/run-security-tests.js` | Sesiones `.json` envenenadas, contaminación de prototipos, XSS en reporte y tabla, bombas zip, inyección de fórmulas verificada sobre el CSV descargado, SVG con script, imágenes desmesuradas y aislamiento de red. |
 
 ## Publicación web
 

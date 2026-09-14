@@ -187,10 +187,27 @@ const polluted = page => page.evaluate(() => ({
   check(!(await pwned(page)), 'el contenido del Excel no ejecutó nada');
   const pol2 = await polluted(page);
   check(Object.values(pol2).every(v => v === undefined), 'la columna «__proto__» del Excel no contaminó prototipos');
-  const dlCsv = await Promise.all([page.waitForEvent('download'),
-    page.evaluate(() => { document.querySelector('.tab[data-view="hallazgos"]').click(); }) &&
-    page.locator('#btn-export-findings').click().catch(()=>{})]).catch(()=>null);
-  // exportación de resultados a Excel y a CSV
+  // Un hallazgo cuyo título es una fórmula: al exportarlo a CSV, Excel no debe
+  // ejecutarlo. Se comprueba sobre el archivo realmente descargado.
+  const FORMULA = "=cmd|' /C calc'!A0";
+  await page.locator('.tab[data-view="hallazgos"]').click();
+  await page.locator('#btn-new-finding').click();
+  await page.waitForTimeout(400);
+  await page.locator('#modal-body input[type="text"]').first().fill(FORMULA);
+  await page.locator('#modal-body textarea').fill('@SUM(1+1)*cmd|\' /C calc\'!A0');
+  await page.locator('#modal-foot button.primary').click();
+  await page.waitForTimeout(500);
+  const dlCsv = await Promise.all([page.waitForEvent('download'), page.locator('#btn-export-findings').click()]);
+  const csvPath = path.join(OUT, 'hallazgos-hostiles.csv'); await dlCsv[0].saveAs(csvPath);
+  const csv = fs.readFileSync(csvPath, 'utf8');
+  const campos = csv.split(/\r?\n/).flatMap(l => l.split(';')).map(c => c.replace(/^"|"$/g, ''));
+  const peligrosos = campos.filter(c => /^[=+\-@\t]/.test(c) && !/^-?\d+([.,]\d+)?$/.test(c));
+  check(peligrosos.length === 0, 'ninguna celda del CSV empieza por = + - @ (Excel no la ejecutaría)',
+        peligrosos.slice(0, 2).join(' | ') || 'todas neutralizadas');
+  check(csv.includes("'" + FORMULA) || csv.includes('\'=cmd'), 'la fórmula quedó prefijada con apóstrofo',
+        (campos.find(c => c.includes('cmd')) || '').slice(0, 40));
+
+  // exportación de resultados a Excel
   await page.locator('.tab[data-view="escenarios"]').click();
   const dlx = await Promise.all([page.waitForEvent('download'), page.locator('#btn-export-xlsx').click()]);
   const xlsxPath = path.join(OUT, 'resultados-hostiles.xlsx'); await dlx[0].saveAs(xlsxPath);

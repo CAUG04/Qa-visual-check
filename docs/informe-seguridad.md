@@ -15,7 +15,7 @@ puede intentar incrustarla o inducir a la víctima a cargar contenido preparado.
 | Suite | Verificaciones | Estado |
 |---|---|---|
 | Funcional (`tests/run-tests.js`) | 50 | 50 OK |
-| Seguridad (`tests/run-security-tests.js`) | 42 | 42 OK |
+| Seguridad (`tests/run-security-tests.js`) | 44 | 44 OK |
 
 Sin peticiones de red salientes en ninguna prueba. Sin errores de JavaScript no controlados.
 
@@ -56,7 +56,9 @@ aplicación sigue respondiendo y la memoria no pasa de ~125 MB.
 Una celda que empieza por `=`, `+`, `-` o `@` se ejecuta al abrir el CSV en Excel o Sheets;
 `=HYPERLINK("http://…"&A1)` es una fuga de datos clásica en herramientas de QA.
 **Corrección:** prefijo de apóstrofo en la exportación. (El `.xlsx` que genera la herramienta usa
-cadenas en línea, que Excel nunca evalúa como fórmula.)
+cadenas en línea, que Excel nunca evalúa como fórmula.) Verificado de extremo a extremo: la suite
+crea un hallazgo titulado `=cmd|' /C calc'!A0`, descarga el CSV y comprueba sobre el archivo real
+que ninguna celda empieza por `=`, `+`, `-` o `@`.
 
 ### S-07 · Avisos que interpretaban marcado — **Baja**
 Los avisos emergentes insertaban HTML; dependían de que cada punto de llamada recordara escapar
