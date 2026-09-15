@@ -296,9 +296,18 @@ function pairName(p){
   const w = S.web.find(x => x.id === p.webId);
   return d?.name || w?.name || 'Par sin nombre';
 }
+/** Iguala el ancho de la web al del diseño (mismo cálculo que «Ajustar ancho»),
+    para que un par recién armado ya nazca alineado en escala. */
+function autoFitScale(p){
+  const d = pairDesign(p), w = pairWeb(p);
+  if (!d || !w || !w.w) return;
+  p.scale = +(d.w / w.w * 100).toFixed(2);
+  p.offx = 0; p.offy = 0;
+}
 function addPair(designId=null, webId=null, name=''){
   const p = { id: uid('pair'), name, designId, webId, scale:100, offx:0, offy:0,
               masks:[], diff:null, diffCanvas:null, diffThumb:null };
+  if (designId && webId) autoFitScale(p);
   S.pairs.push(p);
   return p;
 }
@@ -366,6 +375,7 @@ function sourceSelect(kind, pair){
   const sel = el('select', { onchange:(e)=>{
     pair[kind + 'Id'] = e.target.value || null;
     pair.diff = null; pair.diffCanvas = null; pair.diffThumb = null;
+    autoFitScale(pair);
     renderPairs(); renderSources(); refreshPairSelect();
     if (S.activePairId === pair.id) cmpSetPair(pair.id, { keepView:true });
     saveLocal();
