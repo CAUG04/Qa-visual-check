@@ -109,6 +109,7 @@ async function runDiff(p, { focus=false } = {}){
   };
   t?.remove();
   renderDiffStats(p); renderRegions(p); renderPairs(); cmpDraw(); saveLocal();
+  autoReviewScenariosForPair(p);
   if (focus && S.ui.mode !== 'diff') setMode('diff');
   return p.diff;
 }
