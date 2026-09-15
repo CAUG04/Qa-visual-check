@@ -149,8 +149,33 @@ function applyImport(rows, headerRow, map, keepResults, headers){
   S.scenarios = out;
   S.ui.scPage = 1;
   rebuildFilters(); renderScenarios(); updateKpis(); saveLocal();
+  S.pairs.filter(p => p.diff).forEach(autoReviewScenariosForPair);
   toast('Escenarios importados', `${out.length} caso${out.length>1?'s':''} listo${out.length>1?'s':''} para ejecutar.`, 'ok');
   switchView('escenarios');
+}
+
+/** Auto-revisión: vincula escenarios cuya "Referencia de diseño" coincide (por slug) con
+    el nombre del par, y fija Estado/Severidad/Observación según el % de diferencia ya
+    calculado. Usa los mismos cortes que el indicador de % en «Pares a comparar»
+    (10-sources.js) para mantener un único criterio de "cumple" en toda la app. Siempre
+    sobreescribe, aunque el tester ya hubiera revisado el escenario a mano. */
+function autoReviewScenariosForPair(p){
+  if (!p?.diff) return;
+  const key = slug(pairName(p));
+  if (!key) return;
+  const pct = p.diff.pct;
+  const status = pct < 0.5 ? 'OK' : 'Falla';
+  const severity = pct < 0.5 ? '' : pct < 3 ? 'Baja' : 'Alta';
+  const note = pct < 0.5
+    ? `Revisión automática: ${pct.toFixed(2)}% de diferencia, dentro de tolerancia.`
+    : `Revisión automática: ${pct.toFixed(2)}% de diferencia en ${p.diff.regions} zona(s).`;
+  let touched = false;
+  S.scenarios.forEach(s => {
+    if (!s.ref || slug(s.ref) !== key) return;
+    s.status = status; s.severity = severity; s.note = note;
+    touched = true;
+  });
+  if (touched){ renderScenarios(); updateKpis(); saveLocal(); }
 }
 
 /* ---------- filtros ---------- */
