@@ -156,6 +156,7 @@ async function boot(){
   $('#btn-report-build').addEventListener('click', reportPreview);
   $('#btn-report-download').addEventListener('click', reportDownload);
   $('#btn-report-open').addEventListener('click', reportOpenTab);
+  $('#btn-report-xlsx').addEventListener('click', exportResults);
 
   // modal
   $$('#modal-root [data-close]').forEach(n => n.addEventListener('click', closeModal));
