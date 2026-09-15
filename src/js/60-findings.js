@@ -135,6 +135,13 @@ function renderFindings(){
           cmpSetPair(f.pairId, { keepView:false }); switchView('comparar');
           if (f.rect) setTimeout(()=>zoomToBox(f.rect), 80);
         } }, 'Ver en el comparador') : null,
+        f.pairId && S.pairs.some(p => p.id === f.pairId) ? el('button', { class:'btn xs ghost', title:'Recalcular la diferencia y revisar si el problema sigue',
+          onclick: async ()=>{
+            cmpSetPair(f.pairId, { keepView:false }); switchView('comparar');
+            const p = getPair(f.pairId);
+            if (p) await runDiff(p, { focus:true });
+            if (f.rect) setTimeout(()=>zoomToBox(f.rect), 80);
+          } }, 'Ejecutar') : null,
         el('span', { style:'flex:1' }),
         el('button', { class:'btn xs ghost', title:'Cambiar estado', onclick:()=>{
           f.state = f.state === 'Abierto' ? 'Corregido' : f.state === 'Corregido' ? 'Descartado' : 'Abierto';
